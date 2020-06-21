@@ -1,0 +1,17 @@
+.layout_main{
+    width: 100%;
+    height: 100%;
+    display: block;
+
+}
+
+/* menu bar will overlay on the map */
+.menu_link{
+    position: absolute;
+    top:5px;
+    left: 5px;
+    z-index: 99999999;
+}
+.menu_bar_image{
+    height: 4vh;
+}
