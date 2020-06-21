@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow, GroundOverlay } from 'react-google-maps';
-import classes from './MainContent.module.css';
-// const { MarkerWithLabel } = require("react-google-maps/lib/components/addons/MarkerWithLabel");
+import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow } from 'react-google-maps';
+import classes from './MapWrapper.module.css';
+import mapStyle from '../../static/mapStyle';
+import job_marker from '../../static/map_marker.svg';
+import current_location_marker from '../../static/current_location.svg';
 
-import mapStyle from '../../static/mapStyle'
 function Map (){
     const [jobs, setJobs] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -18,9 +19,9 @@ function Map (){
     });
     const [currentPosition, setCurrentPosition] =  useState(null);
     const [isGeolocationEnabled, setIsGeolocationEnabled] = useState(false)
-
     const [showModal, setShowModal] = useState(false)
 
+    // Use geolocation to get users current location
     useEffect( () => {
         console.log(' get geolocation');
 
@@ -54,10 +55,12 @@ function Map (){
             }
     }, []);
 
+
+    // Fetch data from API provided
     useEffect(() =>{
         console.log('Fetch jobs');
-
-        fetch('https://run.mocky.io/v3/d27b910a-4fcc-4ff6-ba34-717f9834105d')
+        const url = 'https://run.mocky.io/v3/d27b910a-4fcc-4ff6-ba34-717f9834105d';
+        fetch(url)
         .then( response => response.json())
         .then( (results) => {
             // get the distance to each job
@@ -109,87 +112,6 @@ function Map (){
         if(jobs)  addTravelTime(jobs);
 
     }, [currentPosition])
-    // const addTravelTime = (jobs) => {
-
-    //     const distanceMatrix = new window.google.maps.DistanceMatrixService();
-    //     const origin = [currentPosition];
-    //     const travelMode = window.google.maps.TravelMode.DRIVING;
-    //     console.log("direction", origin);
-
-    //     // for each job get the distance
-    //         jobs.map( job => {
-    //         let jobCoords = [{lat:job.$propertyLocation.coords.latitude, lng: job.$propertyLocation.coords.longitude}];
-    //         distanceMatrix.getDistanceMatrix({
-    //             origins: origin,
-    //             destinations: jobCoords,
-    //             travelMode
-    //             },
-    //             (response, status) => {
-    //                 console.log(response);
-
-    //                 if( status === 'OK'){
-    //                     if(response && response.rows[0]  && response.rows[0].elements[0].duration){
-    //                         job.$travelTime = response.rows[0].elements[0].duration.text
-    //                     }
-
-    //                 }
-    //                 return job
-    //         });
-    //         console.log("job", job)
-    //     })
-
-    // }
-    // useEffect( () => {
-    //     console.log("direction");
-
-    //     const directionsService = new window.google.maps.DirectionsService();
-    //     const distanceMatrix = new window.google.maps.DistanceMatrixService();
-    //     const origin = [currentPosition];
-    //     const travelMode = window.google.maps.TravelMode.DRIVING
-    //     // const destination = [ {lat: 41.756795, lng: -78.954298} ];
-
-    //     // directionsService.route(
-    //     //   {
-    //     //     origin: origin,
-    //     //     destination: destination,
-    //     //     travelMode: window.google.maps.TravelMode.DRIVING
-    //     //   },
-    //     //   (result, status) => {
-    //     //       console.log("directionsService" ,result);
-
-    //     //     if (status === window.google.maps.DirectionsStatus.OK) {
-    //     //       setDirection(result)
-    //     //     } else {
-    //     //       console.error(`error fetching directions ${result}`);
-    //     //     }
-    //     //   }
-    //     // );
-    //     console.log("orgin", jobs);
-
-    //     // for each job get the distance
-    //     // return () => {
-    //     //     jobs.map( job => {
-    //     //     let jobCoords = [job.$propertyLocation.coords];
-    //     //     distanceMatrix.getDistanceMatrix(
-    //     //         {origins: origin,
-    //     //         destinations: jobCoords,
-    //     //         travelMode
-    //     //         },
-    //     //         (response, status) => {
-    //     //             if( status === 'OK'){
-    //     //                 if(response && response.rows[0]  && response.rows[0].elements[0].duration){
-    //     //                     console.log("STATUS", status)
-    //     //                     console.log("response", response.rows[0].elements[0].duration, response)
-    //     //                 }
-
-    //     //             }
-
-    //     //         }
-    //     //     )
-    //     // })}
-
-
-    // },[currentPosition, jobs]);
 
 
     const renderMarkers = (jobs) => {
@@ -207,7 +129,7 @@ function Map (){
                 text={job.$trade}
                 position = {{ lat: coords.lat, lng: coords.lng }}
                 onClick = {() => setSelectedJob (job)}
-                icon = {{ url: '/map_marker.svg', scaledSize: new window.google.maps.Size(35, 35)}}
+                icon = {{ url: job_marker, scaledSize: new window.google.maps.Size(35, 35)}}
                 />
             ) })
         return jobsList;
@@ -219,7 +141,7 @@ function Map (){
             <React.Fragment>
                 <Marker
                 position = {currentPosition}
-                icon = {{ url: '/location.svg', scaledSize: new window.google.maps.Size(35, 35)}}
+                icon = {{ url: current_location_marker, scaledSize: new window.google.maps.Size(35, 35)}}
                 />
                 {!isGeolocationEnabled &&
                 <InfoWindow position={propsMap.center} >
@@ -274,20 +196,8 @@ function Map (){
 
             {showCurrentPosition()}
             {selectedJob && showJobInfo(selectedJob) }
-            {/* <div> test</div> */}
-            {/* <DirectionsRenderer
-                directions={direction}
-            /> */}
 
-             {/* <GroundOverlay
-                defaultUrl='https://developers.google.com/maps/documentation/javascript/examples/full/images/talkeetna.png'
-                bounds={new window.google.maps.LatLngBounds(
-                    new window.google.maps.LatLng(42.712216, -72.22655),
-                    new window.google.maps.LatLng(40.773941, -74.12544)
-                )}
-                // defaultOpacity={1}
-            /> */}
-    { showModal &&
+            { showModal &&
                 <div className={classes.accept_job_modal}>
                     <form>
                         <input type="text" defaultValue="I am on my way" />

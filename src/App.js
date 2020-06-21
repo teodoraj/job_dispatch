@@ -1,17 +1,13 @@
 import React from 'react';
 import './App.module.css';
 import Layout from './container/Layout';
-import MainContent from './components/MainContent/MainContent';
 
-import Wrapper from './components/MainContent/Main';
+import MapWrapper from './components/MainContent/MapWrapper';
 function App() {
   return (
     <div className="App">
       <Layout>
-        {/* add menu */}
-
-        <Wrapper />
-
+        <MapWrapper />
       </Layout>
 
     </div>
