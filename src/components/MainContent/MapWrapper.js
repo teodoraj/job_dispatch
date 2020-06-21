@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow } from 'react-google-maps';
+import { GoogleMap, withScriptjs, withGoogleMap, Marker, InfoWindow, OverlayView } from 'react-google-maps';
 import classes from './MapWrapper.module.css';
 import mapStyle from '../../static/mapStyle';
 import job_marker from '../../static/map_marker.svg';
@@ -182,19 +182,55 @@ function Map (){
         )
     }
 
-    if (error) {
-        return <div> Error: {error} </div>
-    } else if (!isLoaded) {
-        return <div> Is loading ....</div>
-    } else{
+
+    const getPixelPositionOffset = (width, height) => ({
+        x: -(width / 2),
+        y: -(height / 2),
+      })
+
+    const showOverlayView = () => {
+
+        return(
+        //     <OverlayView
+        //     position={propsMap.center}
+        //     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        //     /*
+        //      * 2. Tweak the OverlayView's pixel position. In this case, we're
+        //      *    centering the content.
+        //      */
+        //     getPixelPositionOffset={getPixelPositionOffset}
+        //     /*
+        //      * 3. Create OverlayView content using standard React components.
+        //      */
+        //   >
+        //     <div className={classes.map_overlay}>
+        //       <h1></h1>
+
+        //     </div>
+        //   </OverlayView>
+        <>
+            <div className={classes.map_overlay}></div>
+            <div className={classes.map_overlay_text}>
+            <h1>MESSAGE</h1>
+            </div>
+          </>
+        )
+    }
+    // if (error) {
+    //     return <div> Error: {error} </div>
+    // } else if (!isLoaded) {
+    //     return <div> Is loading ....</div>
+    // } else{
     return (
         <GoogleMap
         defaultZoom={propsMap.zoom}
         defaultCenter={{lat: propsMap.center.lat, lng:propsMap.center.lng}}
         defaultOptions = {{disableDefaultUI: true, styles: mapStyle}}>
-            {renderMarkers(jobs)}
+            {(!isLoaded ||  error) && showOverlayView()}
 
-            {showCurrentPosition()}
+            {isLoaded  && renderMarkers(jobs)}
+
+            {isLoaded && showCurrentPosition()}
             {selectedJob && showJobInfo(selectedJob) }
 
             { showModal &&
@@ -205,10 +241,15 @@ function Map (){
                     </form>
                 </div>
             }
+
+
+
+
+
         </GoogleMap>
         )
     }
-}
+// }
 
 // withScriptjs embeds all the sripts necessary for the map
 const GoogleMapWrapper = withScriptjs(withGoogleMap(Map));
