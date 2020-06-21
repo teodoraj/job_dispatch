@@ -1,0 +1,63 @@
+.map_overlay{
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0.6;
+  }
+
+  .map_overlay_text{
+    position: absolute;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    background: transparent;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .map_overlay_text img{
+      width: 20vw;
+  }
+
+  .map_marker_info{
+    font-size: 0.8rem;
+  }
+
+  .map_marker_info button, .map_accept_job_modal button{
+    display: inline-block;
+    padding: 5px 12px;
+    margin: 5px auto;
+    border: 1px solid #b5dae1;
+    background: #f2f2f2;
+  }
+
+  .map_marker_info button:hover,.map_marker_info button:active, .map_marker_info button:focus {
+    background: #f4dcdb;
+  }
+  .map_geolocation_info{
+    font-size: 0.8rem;
+  }
+  .map_accept_job_modal{
+    align-items: center;
+    width: 80vw;
+    height: 20vh;
+    display: flex;
+    justify-content: center;
+    background: #fff;
+  }
+
+  .map_accept_job_modal button{
+      margin: 15px 5px;
+  }
+  .map_accept_job_modal input{
+      display: block;
+  }

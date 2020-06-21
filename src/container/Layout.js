@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './Layout.module.css'
-import menuBar from '../static/nav_bar.svg'
+import menuBar from '../static/icons/nav_bar.svg'
 
 
 const Layout = (props) =>{
