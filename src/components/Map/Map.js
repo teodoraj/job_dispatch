@@ -7,17 +7,17 @@ import current_location_marker from '../../static/icons/current_location.svg';
 import loading_icon from '../../static/icons/loading.svg';
 
 export default function Map (){
-    const [jobs, setJobs] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [error, setError] = useState('');
-    const [selectedJob, setSelectedJob] = useState(null);
-    const [propsMap, setPropsMap] = useState({
+    const defaultPropsMap = {
         zoom: 8,
         center:{
             lat: 42 ,
             lng: -72
         }
-    });
+    };
+    const [jobs, setJobs] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [error, setError] = useState('');
+    const [selectedJob, setSelectedJob] = useState(null);
     const [currentPosition, setCurrentPosition] =  useState(null);
     const [isGeolocationEnabled, setIsGeolocationEnabled] = useState(false)
     const [showForm, setShowForm] = useState(false)
@@ -36,31 +36,26 @@ export default function Map (){
                 setIsGeolocationEnabled(true);
                 setCurrentPosition(geolocation);
 
-
-                return currentPosition, propsMap
               },
                 err => {
-                    console.log('No current location', err);
                     setIsGeolocationEnabled(false);
-                    setCurrentPosition(propsMap.center);
+                    setCurrentPosition(defaultPropsMap.center);
                 }
               );
             } else {
 
               // Browser doesn't support Geolocation
-              console.log('No browser support for current location');
-              setCurrentPosition(propsMap.center);
+              setCurrentPosition(defaultPropsMap.center);
             }
     }, []);
 
 
     // Fetch data from API provided
-    useEffect(() =>{
-        console.log('Fetch jobs');
+    useEffect(() => {
         const url = 'https://run.mocky.io/v3/d27b910a-4fcc-4ff6-ba34-717f9834105d';
         fetch(url)
-        .then( response => response.json())
-        .then( results => {
+        .then(response => response.json())
+        .then(results => {
             // get the distance to each job
             // update state
             setJobs(results);
@@ -74,16 +69,14 @@ export default function Map (){
         );
     },[] );
 
-    // add
-    useEffect( () => {
+    // add travel time to each job based
+    useEffect(() => {
         function addTravelTime (jobs) {
-            console.log("add travel time");
-
             const distanceMatrix = new window.google.maps.DistanceMatrixService();
-            const origin = [currentPosition || propsMap.center];
+            const origin = [currentPosition || defaultPropsMap.center];
             const travelMode = window.google.maps.TravelMode.DRIVING;
             // for each job get the distance
-                jobs.map( job => {
+                jobs.map(job => {
                 let jobCoords = [{lat:job.$propertyLocation.coords.latitude, lng: job.$propertyLocation.coords.longitude}];
                 distanceMatrix.getDistanceMatrix({
                     origins: origin,
@@ -91,25 +84,26 @@ export default function Map (){
                     travelMode
                     },
                     (response, status) => {
-                        if( status === 'OK'){
-                            if(response && response.rows[0]  && response.rows[0].elements[0].duration){
-                                job.$travelTime = response.rows[0].elements[0].duration.text
+                        if(status === 'OK'){
+                            if(response && response.rows[0] && response.rows[0].elements[0].duration){
+                                job.$travelTime = response.rows[0].elements[0].duration.text;
                             }
                         }
-                        return job
                 });
+                return job;
             })
 
         }
-        if(jobs)  addTravelTime(jobs);
-    }, [currentPosition, jobs])
+        if(jobs) addTravelTime(jobs);
+    }, [currentPosition, jobs, defaultPropsMap.center])
+
 
 
     const renderJobMarker = (jobs) => {
         let jobsList = [];
 
         jobs.map( job => {
-            let coords ={
+            let coords = {
                 lat: job.$propertyLocation.coords.latitude,
                 lng: job.$propertyLocation.coords.longitude
             }
@@ -128,7 +122,6 @@ export default function Map (){
     };
 
     const showCurrentPosition = () => {
-
         return(
             <>
                 <Marker
@@ -136,11 +129,11 @@ export default function Map (){
                 icon = {{ url: current_location_marker, scaledSize: new window.google.maps.Size(35, 35)}}
                 />
                 {!isGeolocationEnabled &&
-                <InfoWindow position={propsMap.center} >
+                <InfoWindow position={defaultPropsMap.center} >
                     <div className={classes.map_geolocation_info}>
-                    <h4>Geolocation disabled!</h4>
-                    <p>Please enable your current location </p>
-                    <em>We are going to use default location</em>
+                        <h4>Geolocation disabled!</h4>
+                        <p>Please allow us to use your current location</p>
+                        <em>We are going to use default location</em>
                     </div>
                 </InfoWindow>}
             </>
@@ -168,23 +161,25 @@ export default function Map (){
                     {info.travelTime && <p>{info.travelTime}</p> }
                     <p>{info.claim}</p>
                     <em>{info.address}</em>
-
                     <button onClick={() => setShowForm(true)}>Accept</button>
                 </div>
             </InfoWindow>
         )
     }
 
-
+    // do something with the selected jos(send API request to update the state)
+    // change the marker color based on the state(e.g: red - requires work, green - wip)
     const updateJobState = () => {
-
+        return false;
     }
+
     const showOverlay = () => {
         return(
         <>
             <div className={classes.map_overlay}></div>
             <div className={classes.map_overlay_text}>
                 {error && <p>Sorry, we can not provide the available jobs at the moment.<br /> Please try again later.</p>}
+
                 {!isLoaded &&
                     <>
                         <p>Loading available jobs</p>
@@ -196,7 +191,7 @@ export default function Map (){
                     <div className={classes.map_accept_job_modal}>
                         <form>
                             <input type="text" defaultValue="I am on my way" />
-                            <button onClick={() => updateJobState}>Send</button>
+                            <button onClick={() => updateJobState()}>Send</button>
                             <button onClick={() => setShowForm(false)}>Cancel</button>
                         </form>
                     </div>
@@ -208,9 +203,9 @@ export default function Map (){
 
     return (
         <GoogleMap
-        defaultZoom={propsMap.zoom}
-        defaultCenter={propsMap.center}
-        center = {currentPosition}
+        defaultZoom={defaultPropsMap.zoom}
+        defaultCenter={defaultPropsMap.center}
+        center = {currentPosition || defaultPropsMap.center }
         defaultOptions = {{disableDefaultUI: true, styles: mapStyle}}>
             {(!isLoaded ||  error || showForm ) && showOverlay()}
 

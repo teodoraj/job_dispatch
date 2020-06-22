@@ -1,0 +1,4 @@
+1. Unit tests
+2. Redux for state management
+3. Using axios for API calls
+4. Use CSS preprocessor (SASS)

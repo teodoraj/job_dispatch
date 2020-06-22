@@ -38,6 +38,11 @@
     margin: 5px auto;
     border: 1px solid #b5dae1;
     background: #f2f2f2;
+    border-radius: 5px;
+  }
+  .map_marker_info h4{
+    margin: 5px 0;
+    font-size: 1rem;
   }
 
   .map_marker_info button:hover,.map_marker_info button:active, .map_marker_info button:focus {
@@ -48,16 +53,45 @@
   }
   .map_accept_job_modal{
     align-items: center;
-    width: 80vw;
-    height: 20vh;
     display: flex;
     justify-content: center;
     background: #fff;
+    height: 20vh;
+  }
+
+  .map_accept_job_modal form{
+    width: 80%;
+    text-align: left;
   }
 
   .map_accept_job_modal button{
-      margin: 15px 5px;
+      margin: 15px 5px 15px 0;
+
   }
   .map_accept_job_modal input{
       display: block;
+      width: 70%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 3%;
+
+  }
+
+  @media screen and (max-width: 425px){
+    .map_accept_job_modal{
+        width: 80vw;
+    }
+  }
+
+  @media screen and (min-width: 426px){
+    .map_accept_job_modal{
+        width: 50vw;
+    }
+  }
+
+  @media screen and (min-width: 1024px){
+    .map_accept_job_modal{
+        width: 30vw;
+    }
   }

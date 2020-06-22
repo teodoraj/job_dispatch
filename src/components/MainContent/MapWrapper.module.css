@@ -7,7 +7,11 @@
 .wrapper_map_element{
     height: 100%;
 }
+.wrapper_container{
+    background: url('../../static/icons/loading.svg') no-repeat center center ;
+}
 .wrapper_map_element em{
     display: block;
+    font-weight: bold;
 }
 
